@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "644277244077",
+    "project_id": "keep-unes",
+    "storage_bucket": "keep-unes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644277244077:android:7a612399e0672e5e6d7624",
+        "android_client_info": {
+          "package_name": "com.example.google_keep_clone_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtx6u8xD1nEpCiCqVUYQLIS8xYarFCCYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

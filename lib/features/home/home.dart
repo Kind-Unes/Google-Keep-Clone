@@ -14,7 +14,6 @@ class Home extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     const appBarColor = Color.fromARGB(255, 32, 26, 26);
     const greyColor = Colors.grey;
-
     const backgroundColor = Color.fromARGB(255, 21, 21, 21);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarColor: appBarColor, // Change this color
