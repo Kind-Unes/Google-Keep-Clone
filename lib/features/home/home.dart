@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_keep_clone_app/features/home/controllers/providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:readmore/readmore.dart';
 
 class Home extends ConsumerWidget {
   const Home({
@@ -11,9 +12,13 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    const backgroundColor = Color.fromARGB(255, 21, 21, 21);
     const appBarColor = Color.fromARGB(255, 32, 26, 26);
     const greyColor = Colors.grey;
+
+    const backgroundColor = Color.fromARGB(255, 21, 21, 21);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      systemNavigationBarColor: appBarColor, // Change this color
+    ));
 
     void switchView() {
       ref.read(columnViewProvider.notifier).update((state) => !state);
@@ -21,6 +26,83 @@ class Home extends ConsumerWidget {
 
     final bool isMultiColumnView = ref.watch(columnViewProvider);
     return Scaffold(
+      backgroundColor: backgroundColor,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: appBarColor,
+        tooltip: "Create New Note",
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        onPressed: () {},
+        child: const SizedBox(
+          height: 40,
+          width: 40,
+          child: Image(
+            image: AssetImage(
+              "assets/icons/icons8-plus-100-removebg-preview.png",
+            ),
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+      floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: appBarColor,
+        height: 55,
+        elevation: 0,
+        child: Row(children: [
+          const SizedBox(
+            width: 5,
+          ),
+          IconButton(
+            onPressed: () {},
+            tooltip: "New list",
+            icon: const Icon(
+              Icons.check_box_outlined,
+              size: 30,
+            ),
+            color: Colors.grey,
+          ),
+          const SizedBox(
+            width: 9,
+          ),
+          IconButton(
+            onPressed: () {},
+            tooltip: "New list",
+            icon: const Icon(
+              Icons.draw_outlined,
+              size: 30,
+            ),
+            color: Colors.grey,
+          ),
+          const SizedBox(
+            width: 9,
+          ),
+          IconButton(
+            onPressed: () {},
+            tooltip: "New list",
+            icon: const Icon(
+              Icons.mic_none_outlined,
+              size: 30,
+            ),
+            color: Colors.grey,
+          ),
+          const SizedBox(
+            width: 9,
+          ),
+          IconButton(
+            onPressed: () {},
+            tooltip: "New list",
+            icon: const Icon(
+              Icons.photo_outlined,
+              size: 30,
+            ),
+            color: Colors.grey,
+          ),
+          const SizedBox(
+            width: 9,
+          ),
+        ]),
+      ),
       drawer: const MyDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {},
@@ -128,39 +210,130 @@ class Home extends ConsumerWidget {
                     ),
                   ],
                 )),
-            isMultiColumnView
-                ? SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        return Container(
-                          decoration:
-                              const BoxDecoration(color: backgroundColor),
-                          child: ListTile(
-                            textColor: Colors.white,
-                            title: Text('Item $index'),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (BuildContext context, int index) {
-                        return Container(
-                          decoration:
-                              const BoxDecoration(color: backgroundColor),
-                          child: ListTile(
-                            textColor: Colors.white,
-                            title: Text('Item $index'),
-                          ),
-                        );
-                      },
-                    ),
-                  )
+            if (isMultiColumnView)
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return NoteWidget(
+                      index: index,
+                      title: 'qsdsq',
+                      content: 'dsq',
+                      pictureURL: 'assets/images/download.jpg',
+                    );
+                  },
+                ),
+              )
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    return ListTile(
+                      textColor: Colors.white,
+                      title: Text('Item $index'),
+                    );
+                  },
+                ),
+              )
           ],
         ),
       ),
     );
+  }
+}
+
+class NoteWidget extends StatelessWidget {
+  final int index;
+  final String title;
+  final String content;
+  final String pictureURL;
+
+  const NoteWidget({
+    super.key,
+    required this.index,
+    required this.title,
+    required this.content,
+    required this.pictureURL,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const backgroundColor = Color.fromARGB(255, 21, 21, 21);
+    const borderColor = Color.fromARGB(255, 61, 61, 52);
+
+    return Padding(
+        padding: EdgeInsets.fromLTRB(8, index == 0 ? 16 : 6, 3, 8),
+        child: Material(
+          borderRadius: BorderRadius.circular(15),
+          color: backgroundColor,
+          child: InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(15),
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: borderColor, width: 1),
+                  borderRadius: BorderRadius.circular(15)),
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (pictureURL.trim().isEmpty)
+                    Container()
+                  else
+                    SizedBox(
+                      width: double.infinity,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                            bottomLeft: Radius.zero,
+                            bottomRight: Radius.zero),
+                        child: Image(
+                          image: AssetImage(pictureURL),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  title.trim().isEmpty
+                      ? Container()
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: ReadMoreText(
+                            title,
+                            trimLines: 9,
+                            style: const TextStyle(
+                                fontFamily: "google",
+                                color: Colors.white,
+                                fontSize: 22),
+                          ),
+                        ),
+                  title.trim().isEmpty
+                      ? Container()
+                      : const SizedBox(
+                          height: 16,
+                        ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: ReadMoreText(
+                      content,
+                      trimLines: 9,
+                      trimMode: TrimMode.Line,
+                      textAlign: TextAlign.justify,
+                      trimCollapsedText: " ",
+                      style: const TextStyle(color: Colors.white, fontSize: 17),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  )
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 }
 
@@ -190,16 +363,17 @@ class MyDrawer extends StatelessWidget {
             height: 20,
           ),
           const DrawerListTile(
-            isSelected: true,
+            index: 0,
             icon: Icons.lightbulb_outline,
             text: 'Notes',
             path: '',
           ),
-          // const DrawerListTile(
-          //   icon: Icons.notifications_none,
-          //   text: 'Reminders',
-          //   path: '',
-          // ),
+          const DrawerListTile(
+            icon: Icons.notifications_none,
+            text: 'Reminders',
+            path: '',
+            index: 1,
+          ),
           const MyDivider(),
           ListTile(
             contentPadding: EdgeInsets.zero,
@@ -236,7 +410,44 @@ class MyDrawer extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
+          const DrawerListTile(
+            icon: Icons.label_outline_rounded,
+            text: 'ESI-Notes',
+            path: '',
+            index: 02,
+          ),
+          const DrawerListTile(
+            icon: Icons.add,
+            text: 'Create new label',
+            path: '',
+            index: 03,
+          ),
+          const MyDivider(),
+          const DrawerListTile(
+            icon: Icons.archive_outlined,
+            text: 'Archive',
+            path: '',
+            index: 04,
+          ),
+          const DrawerListTile(
+            icon: Icons.delete_outlined,
+            text: 'Trash',
+            path: '',
+            index: 05,
+          ),
+          const DrawerListTile(
+            icon: Icons.settings,
+            text: 'Settings',
+            path: '',
+            index: 06,
+          ),
+          const DrawerListTile(
+            icon: Icons.help_outline,
+            text: 'Help & feedback',
+            path: '',
+            index: 07,
+          ),
         ],
       ),
     );
@@ -251,7 +462,7 @@ class MyDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
-      scaleX: 1.1,
+      scaleX: 1.06,
       child: const Divider(
           thickness: 1,
           indent: 0,
@@ -261,60 +472,65 @@ class MyDivider extends StatelessWidget {
   }
 }
 
-class DrawerListTile extends StatelessWidget {
+class DrawerListTile extends ConsumerWidget {
   final IconData icon;
   final String text;
   final String path;
-  final bool isSelected;
+  final int index;
   const DrawerListTile({
     super.key,
     required this.icon,
     required this.text,
     required this.path,
-    required this.isSelected,
+    required this.index,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final int currentIndex = ref.watch(drawerIndexProvider);
+    final isSelected = index == currentIndex;
+
     return InkWell(
       borderRadius: BorderRadius.circular(500),
-      onTap: () {},
+      onTap: () {
+        // context.goNamed(path);
+
+        //update the index
+        ref.read(drawerIndexProvider.notifier).update((state) => index);
+      },
       child: Container(
         height: 50,
         width: 200,
         decoration: BoxDecoration(
-            color: isSelected ? const Color.fromARGB(33, 255, 153, 0) : null,
+            color: isSelected ? const Color.fromARGB(32, 255, 153, 0) : null,
             borderRadius: BorderRadius.circular(500)),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 15,
+            ),
+            Icon(
+              icon,
+              color: isSelected
+                  ? const Color.fromARGB(198, 242, 226, 178)
+                  : Colors.grey,
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Text(
+              text,
+              style: TextStyle(
+                  fontSize: 16.5,
+                  fontFamily: "google",
+                  color: isSelected
+                      ? const Color.fromARGB(198, 242, 226, 178)
+                      : Colors.grey,
+                  fontWeight: FontWeight.w400),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-
-
-// Transform.scale(
-//       scaleX: 1.05,
-//       child: ListTile(
-//         iconColor: Colors.grey,
-//         textColor: Colors.grey,
-//         contentPadding: EdgeInsets.zero,
-//         shape: RoundedRectangleBorder(
-//           borderRadius:
-//               BorderRadius.circular(500), // Customize the border radius
-//         ),
-//         tileColor: Colors.blue, // Set the background color
-
-//         leading:
-//             Transform.translate(offset: const Offset(10, 0), child: Icon(icon)),
-//         title: Text(
-//           text,
-//           style: const TextStyle(
-//               fontSize: 16.5,
-//               fontFamily: "google",
-//               fontWeight: FontWeight.w400),
-//         ),
-//         onTap: () {
-//           context.goNamed("hi");
-//         },
-//       ),
-//     );
