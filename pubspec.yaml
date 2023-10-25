@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  font_awesome_flutter: ^10.6.0
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +18,36 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: google
+      fonts:
+        - asset: assets\fonts\google sans\ProductSans-Black.ttf
+          weight: 100
+        - asset: assets\fonts\google sans\ProductSans-BlackItalic.ttf
+          weight: 200
+        - asset: assets\fonts\google sans\ProductSans-Bold.ttf
+          weight: 300
+        - asset: assets\fonts\google sans\ProductSans-BoldItalic.ttf
+          weight: 400
+        - asset: assets\fonts\google sans\ProductSans-Italic.ttf
+          weight: 500
+        - asset: assets\fonts\google sans\ProductSans-Light.ttf
+          weight: 600
+        - asset: assets\fonts\google sans\ProductSans-LightItalic.ttf
+          weight: 700
+        - asset: assets\fonts\google sans\ProductSans-Medium.ttf
+          weight: 800
+        - asset: assets\fonts\google sans\ProductSans-MediumItalic.ttf
+          weight: 900
+        - asset: assets\fonts\google sans\ProductSans-Regular.ttf
+          weight: 900
+        - asset: assets\fonts\google sans\ProductSans-Thin.ttf
+          weight: 900
+        - asset: assets\fonts\google sans\ProductSans-ThinItalic.ttf
+          weight: 900
+        
+
+  #assets:
+    #- assets/images/Facebook_Logo_Primary.png
+    
