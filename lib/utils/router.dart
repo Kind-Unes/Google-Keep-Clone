@@ -1,0 +1,1 @@
+// https://stackoverflow.com/questions/74371607/routeobserver-for-gorouter-to-catch-go-gonamed-transitions
