@@ -2,18 +2,25 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:google_keep_clone_app/common/presentation/theme.dart';
 
 class NoteModel {
+  final FieldValue timeStamp;
+  final String userID;
   final String title;
   final String content;
   final String pictureURL;
-  final bool isPinned;
-  final bool isArchived;
-  final bool isDeleted;
-  final Color backgroundColor;
+  final bool isPinned; //* Nice Ideq
+  final bool isArchived; //* Nice Ideq
+  final bool isDeleted; //* Nice Ideq
   final List<String> labels;
+  final Color backgroundColor;
   NoteModel({
+    required this.timeStamp,
+    required this.userID,
     required this.title,
     required this.content,
     required this.pictureURL,
@@ -23,6 +30,22 @@ class NoteModel {
     required this.backgroundColor,
     required this.labels,
   });
+
+  // Add a static method to create an initial instance of NoteModel
+  static NoteModel initial() {
+    return NoteModel(
+      timeStamp: FieldValue.serverTimestamp(),
+      userID: '',
+      title: '',
+      content: '',
+      pictureURL: '',
+      isPinned: false,
+      isArchived: false,
+      isDeleted: false,
+      backgroundColor: CLRS.backgroundColor,
+      labels: [],
+    );
+  }
 
   NoteModel copyWith({
     String? title,
@@ -43,6 +66,8 @@ class NoteModel {
       isDeleted: isDeleted ?? this.isDeleted,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       labels: labels ?? this.labels,
+      userID: '',
+      timeStamp: FieldValue.serverTimestamp(),
     );
   }
 
@@ -70,7 +95,9 @@ class NoteModel {
         backgroundColor: Color(map['backgroundColor'] as int),
         labels: List<String>.from(
           (map['labels'] as List<String>),
-        ));
+        ),
+        userID: map["userID"] as String,
+        timeStamp: map["timeStamp"] as FieldValue);
   }
 
   String toJson() => json.encode(toMap());

@@ -17,6 +17,7 @@ dependencies:
   hooks_riverpod: ^2.4.4
   readmore: ^2.2.0
   riverpod: ^2.4.4
+  uuid: ^4.1.0
 
 dev_dependencies:
   flutter_test:

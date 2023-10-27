@@ -1,35 +1,23 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_keep_clone_app/common/presentation/theme.dart';
+import 'package:google_keep_clone_app/features/create_note/controllers/firestore_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Note extends ConsumerWidget {
-  final String title;
-  final String content;
-  final String pictureURL;
-  final bool isPinned;
-  final bool isArchived;
-  final bool isDeleted;
-  final Color backgroundColor;
-  final List<String> labels;
-  const Note(this.title, this.content, this.pictureURL, this.isPinned,
-      this.isArchived, this.isDeleted, this.backgroundColor, this.labels,
-      {super.key});
+  const Note({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Saving stuff
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      return;
-    });
 
     // Status bar
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarColor: CLRS.appBarColor, // Change this color
     ));
+
+    final notesProvider = ref.watch(noteReaderProvider);
 
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
@@ -135,37 +123,48 @@ class Note extends ConsumerWidget {
           width: 5,
         ),
       ]),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            title.trim().isEmpty
-                ? NotePicture(pictureURL: pictureURL)
-                : Container(),
-            const SizedBox(
-              height: 20,
-            ),
-            NoteTextFeild(
-              maxLines: 2,
-              fontSize: 27,
-              hint: "Title",
-              text: title,
-            ),
-            Transform.translate(
-              offset: const Offset(0, -20),
-              child: NoteTextFeild(
-                maxLines: 1000,
-                hint: "Note",
-                fontSize: 20,
-                text: content,
+      body: notesProvider.when(
+          // TODO ::                                                                     I STOPPED HERE
+          // you should replace this in other place
+          // have a solution for the data loaded (last one vs by id)
+          // if  first created we used last one
+          // if clicked form the home we use id but how we acceed (ask gpt)
+          //we set a provider then we route then we call the provider
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) => Text('Error: $error'),
+          data: (note) {
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  note.title.trim().isEmpty
+                      ? NotePicture(pictureURL: pictureURL)
+                      : Container(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  NoteTextFeild(
+                    maxLines: 2,
+                    fontSize: 27,
+                    hint: "Title",
+                    text: titleLarge,
+                  ),
+                  Transform.translate(
+                    offset: const Offset(0, -20),
+                    child: NoteTextFeild(
+                      maxLines: 1000,
+                      hint: "Note",
+                      fontSize: 20,
+                      text: content,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  )
+                ],
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            )
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 }

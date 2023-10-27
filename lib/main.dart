@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_keep_clone_app/features/create_note/create_note.dart';
+import 'package:google_keep_clone_app/features/notes/screens/archive_page.dart';
+import 'package:google_keep_clone_app/features/reminders/reminders_page.dart';
 import 'package:google_keep_clone_app/firebase_options.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -18,17 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Note(
-          "tiitle",
-          "hi i'm unes",
-          ""
-          // "assets/images/download.jpg"
-          ,
-          false,
-          false,
-          false,
-          Colors.black,
-          ["dsqd"]),
+      home: RemindersPage(0),
     );
   }
 }

@@ -4,17 +4,14 @@ import 'package:google_keep_clone_app/common/presentation/theme.dart';
 import 'package:google_keep_clone_app/features/home/home.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class RemindersPage extends ConsumerWidget {
+class ArchivePage extends ConsumerWidget {
   final int noteNumber;
-  const RemindersPage(this.noteNumber, {super.key});
+  const ArchivePage(this.noteNumber, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    const Color grey = Colors.grey;
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton:
-          const MyFloatingActionButton(appBarColor: CLRS.appBarColor),
-      bottomNavigationBar: const MyBottomAppBar(appBarColor: CLRS.appBarColor),
       drawer: const MyDrawer(),
       backgroundColor: CLRS.backgroundColor,
       appBar: AppBar(
@@ -31,7 +28,7 @@ class RemindersPage extends ConsumerWidget {
           ),
         ],
         title: const Text(
-          "Reminders",
+          "Archive",
           style: TextStyle(fontFamily: "google", fontWeight: FontWeight.w300),
         ),
         backgroundColor: CLRS.backgroundColor,
@@ -53,7 +50,7 @@ class RemindersPage extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.notifications_none,
+                    Icons.archive_outlined,
                     color: Color.fromARGB(255, 180, 180, 180),
                     size: 140,
                   ),
@@ -61,7 +58,7 @@ class RemindersPage extends ConsumerWidget {
                     height: 30,
                   ),
                   Text(
-                    "Notes with upcoming reminders appear here",
+                    "Your archived notes appear here",
                     style: TextStyle(
                         color: Color.fromARGB(255, 180, 180, 180),
                         fontSize: 17,

@@ -26,82 +26,11 @@ class Home extends ConsumerWidget {
     final bool isMultiColumnView = ref.watch(columnViewProvider);
     return Scaffold(
       backgroundColor: backgroundColor,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: appBarColor,
-        tooltip: "Create New Note",
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        onPressed: () {},
-        child: const SizedBox(
-          height: 40,
-          width: 40,
-          child: Image(
-            image: AssetImage(
-              "assets/icons/icons8-plus-100-removebg-preview.png",
-            ),
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
+      floatingActionButton:
+          const MyFloatingActionButton(appBarColor: appBarColor),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      bottomNavigationBar: BottomAppBar(
-        color: appBarColor,
-        height: 55,
-        elevation: 0,
-        child: Row(children: [
-          const SizedBox(
-            width: 5,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.check_box_outlined,
-              size: 30,
-            ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 9,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.draw_outlined,
-              size: 30,
-            ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 9,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.mic_none_outlined,
-              size: 30,
-            ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 9,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.photo_outlined,
-              size: 30,
-            ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 9,
-          ),
-        ]),
-      ),
+      bottomNavigationBar: const MyBottomAppBar(appBarColor: appBarColor),
       drawer: const MyDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {},
@@ -236,6 +165,106 @@ class Home extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MyFloatingActionButton extends StatelessWidget {
+  const MyFloatingActionButton({
+    super.key,
+    required this.appBarColor,
+  });
+
+  final Color appBarColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      backgroundColor: appBarColor,
+      tooltip: "Create New Note",
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      onPressed: () {},
+      child: const SizedBox(
+        height: 40,
+        width: 40,
+        child: Image(
+          image: AssetImage(
+            "assets/icons/icons8-plus-100-removebg-preview.png",
+          ),
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+}
+
+class MyBottomAppBar extends StatelessWidget {
+  const MyBottomAppBar({
+    super.key,
+    required this.appBarColor,
+  });
+
+  final Color appBarColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      color: appBarColor,
+      height: 55,
+      elevation: 0,
+      child: Row(children: [
+        const SizedBox(
+          width: 5,
+        ),
+        IconButton(
+          onPressed: () {},
+          tooltip: "New list",
+          icon: const Icon(
+            Icons.check_box_outlined,
+            size: 30,
+          ),
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          width: 9,
+        ),
+        IconButton(
+          onPressed: () {},
+          tooltip: "New list",
+          icon: const Icon(
+            Icons.draw_outlined,
+            size: 30,
+          ),
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          width: 9,
+        ),
+        IconButton(
+          onPressed: () {},
+          tooltip: "New list",
+          icon: const Icon(
+            Icons.mic_none_outlined,
+            size: 30,
+          ),
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          width: 9,
+        ),
+        IconButton(
+          onPressed: () {},
+          tooltip: "New list",
+          icon: const Icon(
+            Icons.photo_outlined,
+            size: 30,
+          ),
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          width: 9,
+        ),
+      ]),
     );
   }
 }
