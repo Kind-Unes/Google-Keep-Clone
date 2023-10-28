@@ -127,7 +127,7 @@ class Note extends ConsumerWidget {
           // TODO ::                                                                     I STOPPED HERE
           // you should replace this in other place
           // have a solution for the data loaded (last one vs by id)
-          // if  first created we used last onesqdqs
+          // if  first created we used last onesqdqsqsds
           // if clicked form the home we use id but how we acceed (ask gpt)
           //qsdsqdsq
           //we set a provider then we route then w      e call the provider
