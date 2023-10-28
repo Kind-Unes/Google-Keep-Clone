@@ -130,6 +130,7 @@ class Note extends ConsumerWidget {
           // if  first created we used last one
           // if clicked form the home we use id but how we acceed (ask gpt)
           //we set a provider then we route then we call the provider
+          // TODO : i didin't do anything today :D
           loading: () => const CircularProgressIndicator(),
           error: (error, stackTrace) => Text('Error: $error'),
           data: (note) {
