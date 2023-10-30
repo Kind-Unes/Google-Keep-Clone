@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_keep_clone_app/common/presentation/theme.dart';
 import 'package:google_keep_clone_app/models/note_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -13,8 +13,8 @@ final allNotesProvider = FutureProvider<List<NoteModel>>((ref) async {
   return ref.watch(firestoreProvider).fetchNotes();
 });
 
-final idNoteProvider = FutureProvider.family((ref, String id) async {
-  return ref.watch(firestoreProvider).getNoteById(id);
+final idNoteProvider = StreamProvider.family<NoteModel?, String>((ref, noteId) {
+  return ref.watch(firestoreProvider).getNoteByIdStream(noteId);
 });
 
 class FirestoreService {
@@ -24,58 +24,62 @@ class FirestoreService {
       : _firestore = firestore;
 
   //* Create Operation
-  Future<void> createNote() async {
+
+  Future<Either<String, String>> createNote() async {
     try {
+      final String id = const Uuid().v4();
       final noteModel = NoteModel(
-        id: const Uuid().v4(),
-        timeStamp: FieldValue.serverTimestamp(),
+        id: id,
+        userID: 'YOUR_USER_ID',
+        labels: [],
+        timeStamp: Timestamp.now(),
         title: "",
         content: "",
         pictureURL: "",
         isPinned: false,
         isArchived: false,
         isDeleted: false,
-        backgroundColor: CLRS.backgroundColor,
-        labels: [],
-        userID: 'YOUR_USER_ID',
       );
 
       await _firestore.collection("notes").add(noteModel.toMap());
+
+      return Right(id); // Return the generated ID on success
     } catch (e) {
       debugPrint(
           "---------------------------$e------------------------------------");
+      return Left("Error: $e"); // Return an error message on failure
     }
   }
 
-  Future<NoteModel?> getNoteById(String noteId) async {
+  Stream<NoteModel?> getNoteByIdStream(String noteId) {
     try {
-      CollectionReference notesCollection = _firestore.collection('notes');
+      final notesCollection = _firestore.collection('notes');
+      final query = notesCollection.where("id", isEqualTo: noteId);
 
-      Query query = notesCollection.where("id", isEqualTo: noteId);
+      return query.snapshots().map((querySnapshot) {
+        if (querySnapshot.docs.isNotEmpty) {
+          final document = querySnapshot.docs.first;
+          final data = document.data();
 
-      QuerySnapshot querySnapshot = await query.get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        DocumentSnapshot document = querySnapshot.docs.first;
-        return NoteModel(
-          id: document["id"],
-          title: document['title'],
-          content: document['content'],
-          timeStamp: document["timeStamb"],
-          userID: document["userID"],
-          pictureURL: document["pictureURL"],
-          isPinned: document["isPinned"],
-          isArchived: document["isArchived"],
-          isDeleted: document["isDeleted"],
-          backgroundColor: document["backgroundColor"],
-          labels: document["labels"],
-        );
-      } else {
-        return null;
-      }
+          return NoteModel(
+            id: document.id,
+            title: data['title'],
+            content: data['content'],
+            timeStamp: data['timeStamp'],
+            userID: data['userID'],
+            pictureURL: data['pictureURL'],
+            isPinned: data['isPinned'],
+            isArchived: data['isArchived'],
+            isDeleted: data['isDeleted'],
+            labels: data['labels'],
+          );
+        } else {
+          return null;
+        }
+      });
     } catch (e) {
       debugPrint('Error: $e');
-      return null;
+      return Stream.value(null); // Return an empty stream in case of an error
     }
   }
 
@@ -89,20 +93,51 @@ class FirestoreService {
 
   // update data
   Future<void> updateFieldInDocument(
-    String documentId,
+    String noteId,
     String fieldToUpdate,
     dynamic newValue,
   ) async {
     try {
-      DocumentReference documentReference =
-          _firestore.collection('notes').doc(documentId);
-      Map<String, dynamic> updatedData = {
-        fieldToUpdate: newValue,
-      };
-      await documentReference.update(updatedData);
-      print('Field "$fieldToUpdate" updated successfully.');
+      CollectionReference notesCollection = _firestore.collection('notes');
+      Query query = notesCollection.where("id", isEqualTo: noteId);
+      QuerySnapshot querySnapshot = await query.get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Get the first document that matches the query
+        DocumentSnapshot document = querySnapshot.docs.first;
+
+        // Update the specific field in the document
+        Map<String, dynamic> updatedData = {
+          fieldToUpdate: newValue,
+        };
+
+        await document.reference.update(updatedData);
+        print('Field "$fieldToUpdate" updated successfully.');
+      } else {
+        print('No document found with noteId: $noteId');
+      }
     } catch (e) {
       print('Error updating field: $e');
+    }
+  }
+
+  Future<void> deleteNote(String noteId) async {
+    try {
+      CollectionReference notesCollection = _firestore.collection('notes');
+      Query query = notesCollection.where("id", isEqualTo: noteId);
+      QuerySnapshot querySnapshot = await query.get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Get the first document that matches the query
+        DocumentSnapshot document = querySnapshot.docs.first;
+        await document.reference.delete();
+      }
+
+      print('Note with ID $noteId deleted successfully.');
+    } catch (e) {
+      print('Error deleting note: $e');
+      // You can handle errors or propagate them as needed.
+      rethrow;
     }
   }
 }

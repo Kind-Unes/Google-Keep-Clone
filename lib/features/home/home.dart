@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_keep_clone_app/features/create_note/controllers/firestore_controller.dart';
+import 'package:google_keep_clone_app/features/create_note/create_note.dart';
 import 'package:google_keep_clone_app/features/home/controllers/providers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:readmore/readmore.dart';
@@ -169,7 +172,7 @@ class Home extends ConsumerWidget {
   }
 }
 
-class MyFloatingActionButton extends StatelessWidget {
+class MyFloatingActionButton extends ConsumerWidget {
   const MyFloatingActionButton({
     super.key,
     required this.appBarColor,
@@ -178,12 +181,23 @@ class MyFloatingActionButton extends StatelessWidget {
   final Color appBarColor;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final myProvider = ref.watch(firestoreProvider);
     return FloatingActionButton(
       backgroundColor: appBarColor,
       tooltip: "Create New Note",
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      onPressed: () {},
+      onPressed: () async {
+        final result = await myProvider.createNote();
+        result.fold((l) {
+          //Do Nothing
+        }, (id) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Note(id)),
+          );
+        });
+      },
       child: const SizedBox(
         height: 40,
         width: 40,

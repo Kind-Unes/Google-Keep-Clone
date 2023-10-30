@@ -3,153 +3,146 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_keep_clone_app/common/presentation/theme.dart';
 import 'package:google_keep_clone_app/features/create_note/controllers/firestore_controller.dart';
+import 'package:google_keep_clone_app/features/create_note/controllers/providers.dart';
+import 'package:google_keep_clone_app/utils/snackbar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Note extends ConsumerWidget {
   final String noteId;
-  const Note(this.noteId, {super.key});
+  const Note(this.noteId, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Saving stuff
-
-    // Status bar
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarColor: CLRS.appBarColor, // Change this color
+      systemNavigationBarColor: CLRS.appBarColor,
     ));
 
     final noteProvider = ref.watch(idNoteProvider(noteId));
-    final updateNoteProvider = ref.watch(firestoreProvider);
+    final myProvider = ref.watch(firestoreProvider);
 
     Future<void> updateNoteData(
         String documentId, String fieldToUpdate, dynamic newValue) async {
-      updateNoteProvider.updateFieldInDocument(
-          documentId, fieldToUpdate, newValue);
+      myProvider.updateFieldInDocument(documentId, fieldToUpdate, newValue);
     }
 
-    return Scaffold(
-      bottomNavigationBar: BottomAppBar(
-        color: CLRS.appBarColor,
-        height: 55,
-        elevation: 0,
-        child: Row(children: [
-          const SizedBox(
-            width: 5,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.add_box_outlined,
-              size: 30,
+    final title = ref.watch(titleProvider);
+    final content = ref.watch(contentProvider);
+
+    return WillPopScope(
+      onWillPop: () async {
+        if (title.isEmpty && content.isEmpty) {
+          myProvider.deleteNote(noteId);
+          showSnackbar(context, "Note has been deleted because it was empty.");
+        }
+        return true;
+      },
+      child: Scaffold(
+        bottomNavigationBar: BottomAppBar(
+          color: CLRS.appBarColor,
+          height: 55,
+          elevation: 0,
+          child: Row(children: [
+            const SizedBox(width: 5),
+            IconButton(
+              onPressed: () {},
+              tooltip: "New list",
+              icon: const Icon(
+                Icons.add_box_outlined,
+                size: 30,
+              ),
+              color: Colors.grey,
             ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 9,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.color_lens_outlined,
-              size: 30,
+            const SizedBox(width: 9),
+            IconButton(
+              onPressed: () {},
+              tooltip: "New list",
+              icon: const Icon(
+                Icons.color_lens_outlined,
+                size: 30,
+              ),
+              color: Colors.grey,
             ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 50,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.undo_outlined,
-              size: 30,
+            const SizedBox(width: 50),
+            IconButton(
+              onPressed: () {},
+              tooltip: "New list",
+              icon: const Icon(
+                Icons.undo_outlined,
+                size: 30,
+              ),
+              color: Colors.grey,
             ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 9,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.redo_outlined,
-              size: 30,
+            const SizedBox(width: 9),
+            IconButton(
+              onPressed: () {},
+              tooltip: "New list",
+              icon: const Icon(
+                Icons.redo_outlined,
+                size: 30,
+              ),
+              color: Colors.grey,
             ),
-            color: Colors.grey,
-          ),
-          const SizedBox(
-            width: 79,
-          ),
-          IconButton(
-            onPressed: () {},
-            tooltip: "New list",
-            icon: const Icon(
-              Icons.more_vert,
-              size: 30,
+            const SizedBox(width: 79),
+            IconButton(
+              onPressed: () {},
+              tooltip: "New list",
+              icon: const Icon(
+                Icons.more_vert,
+                size: 30,
+              ),
+              color: Colors.grey,
             ),
-            color: Colors.grey,
-          ),
-        ]),
-      ),
-      backgroundColor: CLRS.backgroundColor,
-      appBar:
-          AppBar(backgroundColor: CLRS.backgroundColor, elevation: 0, actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            FontAwesomeIcons.thumbtack,
-            color: Colors.grey,
-          ),
+          ]),
         ),
-        const SizedBox(
-          width: 5,
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.notification_add_outlined,
-            size: 30,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(
-          width: 5,
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.system_update_tv_rounded,
-            size: 30,
-            color: Colors.grey,
-          ),
-        ),
-        const SizedBox(
-          width: 5,
-        ),
-      ]),
-      body: noteProvider.when(
+        backgroundColor: CLRS.backgroundColor,
+        appBar: AppBar(
+            backgroundColor: CLRS.backgroundColor,
+            elevation: 0,
+            actions: [
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  FontAwesomeIcons.thumbtack,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(width: 5),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.notification_add_outlined,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(width: 5),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.system_update_tv_rounded,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(width: 5),
+            ]),
+        body: noteProvider.when(
           loading: () => const CircularProgressIndicator(),
           error: (error, stackTrace) => Text('Error: $error'),
           data: (note) {
             if (note == null) {
-              return const Text(
-                  'No data available'); // Handle the case when note is null
+              return const Text('No data available');
             }
+            print(note.title);
 
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  note.title.trim().isEmpty
+                  note.pictureURL.trim().isNotEmpty
                       ? NotePicture(pictureURL: note.pictureURL)
                       : Container(),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
                   NoteTextFeild(
                     maxLines: 2,
                     fontSize: 27,
@@ -160,23 +153,28 @@ class Note extends ConsumerWidget {
                     },
                   ),
                   Transform.translate(
-                      offset: const Offset(0, -20),
-                      child: NoteTextFeild(
-                        maxLines: 1000,
-                        hint: "Note",
-                        fontSize: 20,
-                        text: note.content,
-                        onChanged: (String newText) {
-                          updateNoteData(note.id, "content", newText);
-                        },
-                      )),
-                  const SizedBox(
-                    height: 20,
-                  )
+                    offset: const Offset(0, -20),
+                    child: NoteTextFeild(
+                      maxLines: 1000,
+                      hint: "Note",
+                      fontSize: 20,
+                      text: note.content,
+                      onChanged: (String newText) {
+                        updateNoteData(note.id, "content", newText);
+
+                        ref
+                            .watch(contentProvider.notifier)
+                            .update((state) => newText);
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             );
-          }),
+          },
+        ),
+      ),
     );
   }
 }
