@@ -9,6 +9,7 @@ import 'package:google_keep_clone_app/common/presentation/theme.dart';
 
 class NoteModel {
   final FieldValue timeStamp;
+  final String id;
   final String userID;
   final String title;
   final String content;
@@ -19,6 +20,7 @@ class NoteModel {
   final List<String> labels;
   final Color backgroundColor;
   NoteModel({
+    required this.id,
     required this.timeStamp,
     required this.userID,
     required this.title,
@@ -44,6 +46,7 @@ class NoteModel {
       isDeleted: false,
       backgroundColor: CLRS.backgroundColor,
       labels: [],
+      id: '',
     );
   }
 
@@ -68,6 +71,7 @@ class NoteModel {
       labels: labels ?? this.labels,
       userID: '',
       timeStamp: FieldValue.serverTimestamp(),
+      id: '',
     );
   }
 
@@ -97,7 +101,8 @@ class NoteModel {
           (map['labels'] as List<String>),
         ),
         userID: map["userID"] as String,
-        timeStamp: map["timeStamp"] as FieldValue);
+        timeStamp: map["timeStamp"] as FieldValue,
+        id: '');
   }
 
   String toJson() => json.encode(toMap());

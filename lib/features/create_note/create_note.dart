@@ -6,7 +6,8 @@ import 'package:google_keep_clone_app/features/create_note/controllers/firestore
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class Note extends ConsumerWidget {
-  const Note({super.key});
+  final String noteId;
+  const Note(this.noteId, {super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,7 +18,14 @@ class Note extends ConsumerWidget {
       systemNavigationBarColor: CLRS.appBarColor, // Change this color
     ));
 
-    final notesProvider = ref.watch(noteReaderProvider);
+    final noteProvider = ref.watch(idNoteProvider(noteId));
+    final updateNoteProvider = ref.watch(firestoreProvider);
+
+    Future<void> updateNoteData(
+        String documentId, String fieldToUpdate, dynamic newValue) async {
+      updateNoteProvider.updateFieldInDocument(
+          documentId, fieldToUpdate, newValue);
+    }
 
     return Scaffold(
       bottomNavigationBar: BottomAppBar(
@@ -123,24 +131,21 @@ class Note extends ConsumerWidget {
           width: 5,
         ),
       ]),
-      body: notesProvider.when(
-          // TODO ::                                                                     I STOPPED HERE
-          // you should replace this in other place
-          // have a solution for the data loaded (last one vs by id)
-          // if  first created we used last onesqdqsqsds
-          // if clicked form the home we use id but how we acceed (ask gpt)
-          //qsdsqdsq
-          //we set a provider then we route then wqsdsqdsq      e call the providerqsdqs
-          // TODO : i didin't do anything today :D
+      body: noteProvider.when(
           loading: () => const CircularProgressIndicator(),
           error: (error, stackTrace) => Text('Error: $error'),
           data: (note) {
+            if (note == null) {
+              return const Text(
+                  'No data available'); // Handle the case when note is null
+            }
+
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   note.title.trim().isEmpty
-                      ? NotePicture(pictureURL: pictureURL)
+                      ? NotePicture(pictureURL: note.pictureURL)
                       : Container(),
                   const SizedBox(
                     height: 20,
@@ -149,17 +154,22 @@ class Note extends ConsumerWidget {
                     maxLines: 2,
                     fontSize: 27,
                     hint: "Title",
-                    text: titleLarge,
+                    text: note.title,
+                    onChanged: (String newText) {
+                      updateNoteData(note.id, "title", newText);
+                    },
                   ),
                   Transform.translate(
-                    offset: const Offset(0, -20),
-                    child: NoteTextFeild(
-                      maxLines: 1000,
-                      hint: "Note",
-                      fontSize: 20,
-                      text: content,
-                    ),
-                  ),
+                      offset: const Offset(0, -20),
+                      child: NoteTextFeild(
+                        maxLines: 1000,
+                        hint: "Note",
+                        fontSize: 20,
+                        text: note.content,
+                        onChanged: (String newText) {
+                          updateNoteData(note.id, "content", newText);
+                        },
+                      )),
                   const SizedBox(
                     height: 20,
                   )
@@ -178,8 +188,9 @@ class NoteTextFeild extends StatelessWidget {
     required this.hint,
     required this.text,
     required this.maxLines,
+    required this.onChanged,
   });
-
+  final Function(String) onChanged;
   final String text;
   final double fontSize;
   final String hint;
@@ -189,6 +200,7 @@ class NoteTextFeild extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: TextField(
+        onChanged: onChanged,
         controller: TextEditingController(text: text),
         textAlign: TextAlign.start,
         cursorColor: Colors.white,
