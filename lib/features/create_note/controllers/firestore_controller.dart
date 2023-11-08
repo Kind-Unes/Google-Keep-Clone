@@ -1,9 +1,9 @@
+import 'package:uuid/uuid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_keep_clone_app/models/note_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:uuid/uuid.dart';
 
 final firestoreProvider = Provider<FirestoreService>((ref) {
   return FirestoreService(firestore: FirebaseFirestore.instance);
@@ -141,3 +141,4 @@ class FirestoreService {
     }
   }
 }
+
