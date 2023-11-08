@@ -79,7 +79,13 @@ class FirestoreService {
       });
     } catch (e) {
       debugPrint('Error: $e');
-      return Stream.value(null); // Return an empty stream in case of an error
+      return Stream.value(null); // Return an empty stream in case of an error*
+
+      ///
+      ///
+      ///
+      ///
+      /////
     }
   }
 
@@ -141,4 +147,3 @@ class FirestoreService {
     }
   }
 }
-
