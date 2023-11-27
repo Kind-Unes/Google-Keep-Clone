@@ -23,7 +23,8 @@ class FirestoreService {
   FirestoreService({required FirebaseFirestore firestore})
       : _firestore = firestore;
 
-  //* Create Operation
+  //* Create Operation 
+
 
   Future<Either<String, String>> createNote() async {
     try {
@@ -119,9 +120,7 @@ class FirestoreService {
       ///
       ///
 
-
-
-      
+      ///
       ///
       ///
       ///
